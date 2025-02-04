@@ -1,0 +1,18 @@
+{
+  "name": "tinder-backend",
+  "version": "1.0.0",
+  "description": "tinder kind of application",
+  "license": "ISC",
+  "author": "Saiteja Buddoju",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "runs": "node --watch index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5"
+  }
+}
