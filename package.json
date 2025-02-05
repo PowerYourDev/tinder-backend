@@ -8,11 +8,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "runs": "node --watch index.js"
+    "start": "node src/index.js",
+    "runs": "node --watch src/index.js"
   },
   "dependencies": {
     "express": "^4.21.2",
-    "mongoose": "^8.9.5"
+    "mongoose": "^8.9.5",
+    "validator": "^13.12.0"
   }
 }
