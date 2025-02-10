@@ -1,14 +1,21 @@
 const express =require('express')
-const dbConnect =require('./config/dbConnect')
-const User =require("./models/user/User")
-const {singupValidate} =require('./utils/validate')
+const cookieParser = require('cookie-parser')
 const bycrpt= require('bcrypt')
+
+const dbConnect =require('./config/db/dbConnect')
+
+const User =require("./models/user/User")
+
+const {singupValidate} =require('./utils/validate')
+const generateToken = require('./config/jwtToken/generateToken')
+const authMiddleware =require('./middlewares/auth/authMiddleware')
 
 const App = express()
 
 // we use this exprees.json middleware because to handle and convert  all the incoming json data to js object which we are passing as request to api's 
 // we can use express.json() middleware by using   "app.use()" because it has run for all requests
 App.use(express.json())
+App.use(cookieParser())
 
 
 
@@ -41,6 +48,12 @@ App.post('/singin',async(req,res)=>{
      if(!comparePassword){
         throw new Error('email and password is not correct')
      }
+     const tokenGenerated= generateToken(userExist._id)
+     
+
+     res.cookie("token",tokenGenerated,{ expires: new Date(Date.now() + 900000) })
+
+
      res.send('user login successfully')
     
   }catch(e){
@@ -48,8 +61,11 @@ App.post('/singin',async(req,res)=>{
   }
 })
 //feed
-App.get("/get-all-users",async(req,res)=>{
+App.get("/get-all-users",authMiddleware,async(req,res)=>{
+
+  
  try{
+
   const allUsers=await User.find({})
     if(allUsers.length<1){
       res.status(400).send("no users found ")
