@@ -1,6 +1,8 @@
 const express =require('express')
 const dbConnect =require('./config/dbConnect')
 const User =require("./models/user/User")
+const {singupValidate} =require('./utils/validate')
+const bycrpt= require('bcrypt')
 
 const App = express()
 
@@ -10,21 +12,40 @@ App.use(express.json())
 
 
 
-
-App.post("/singuP",async(req,res,next)=>{
+App.post("/singup",async(req,res,next)=>{
   try{
-   
+    singupValidate(req)
       const {firstName,lastName,email,password}=req.body
     
-
+      
        const savedUser= await User.create({firstName,lastName,email,password})
        res.send({ message: "User Added successfully!", data: savedUser })
        
   }catch(e){
-   res.status(404).send("something went wrong")
+   res.status(404).send("something went wrong"+e)
   }
 
 
+})
+
+App.post('/singin',async(req,res)=>{
+  const {email,password}=req.body
+  try{
+     const userExist= await User.findOne({email:email})
+     console.log(userExist)
+     if(!userExist){
+      throw new Error("email and password is incorrect")
+     }
+     const comparePassword= await bycrpt.compare(password,userExist.password)
+     console.log(comparePassword)
+     if(!comparePassword){
+        throw new Error('email and password is not correct')
+     }
+     res.send('user login successfully')
+    
+  }catch(e){
+     res.status(400).send('something went wrong'+e)
+  }
 })
 //feed
 App.get("/get-all-users",async(req,res)=>{
