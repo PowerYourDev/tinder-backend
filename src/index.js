@@ -10,6 +10,9 @@ const {singupValidate} =require('./utils/validate')
 const generateToken = require('./config/jwtToken/generateToken')
 const authMiddleware =require('./middlewares/auth/authMiddleware')
 
+
+const userRoutes=require('./routes/users/userRoutes')
+
 const App = express()
 
 // we use this exprees.json middleware because to handle and convert  all the incoming json data to js object which we are passing as request to api's 
@@ -18,48 +21,13 @@ App.use(express.json())
 App.use(cookieParser())
 
 
-
-App.post("/singup",async(req,res,next)=>{
-  try{
-    singupValidate(req)
-      const {firstName,lastName,email,password}=req.body
-    
-      
-       const savedUser= await User.create({firstName,lastName,email,password})
-       res.send({ message: "User Added successfully!", data: savedUser })
-       
-  }catch(e){
-   res.status(404).send("something went wrong"+e)
-  }
+App.use("/api/users",userRoutes)
 
 
-})
-
-App.post('/singin',async(req,res)=>{
-  const {email,password}=req.body
-  try{
-     const userExist= await User.findOne({email:email})
-     console.log(userExist)
-     if(!userExist){
-      throw new Error("email and password is incorrect")
-     }
-     const comparePassword= await bycrpt.compare(password,userExist.password)
-     console.log(comparePassword)
-     if(!comparePassword){
-        throw new Error('email and password is not correct')
-     }
-     const tokenGenerated= generateToken(userExist._id)
-     
-
-     res.cookie("token",tokenGenerated,{ expires: new Date(Date.now() + 900000) })
 
 
-     res.send('user login successfully')
-    
-  }catch(e){
-     res.status(400).send('something went wrong'+e)
-  }
-})
+
+
 //feed
 App.get("/get-all-users",authMiddleware,async(req,res)=>{
 
