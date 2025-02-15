@@ -42,20 +42,33 @@ const userSingUpCtrl=async(req,res,next)=>{
           throw new Error('email and password is not correct')
        }
        const tokenGenerated= generateToken(userExist._id)
-       
   
        res.cookie("token",tokenGenerated,{ expires: new Date(Date.now() + 900000) })
   
-  
-       res.send('user login successfully')
+       
+      return res.send('user login successfully')
+      
       
     }catch(e){
        res.status(400).send('something went wrong'+e)
     }
   }  
 
+//-------------------------------------
+//logout
+//-------------------------------------
+
+const userLogoutCtrl=async(req,res)=>{
+    res.cookie('token',null,{
+        expires: new Date(Date.now())
+    }).send("user logout successfull")
+
+}
+
+
 
   module.exports={
     userSingUpCtrl,
-    userLoginCtrl
+    userLoginCtrl,
+    userLogoutCtrl
   }

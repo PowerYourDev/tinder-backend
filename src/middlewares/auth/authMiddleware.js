@@ -19,7 +19,7 @@ const authMiddleware = async (req, res, next) => {
 
     const user = await User.findById(id);
 
-    req.raj = user;
+    req.user = user;
     next();
   } catch (err) {
     res.status(400).send("ERROR: " + err.message);

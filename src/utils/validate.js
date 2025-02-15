@@ -14,6 +14,20 @@ const singupValidate =(req)=>{
 
 }
 
+const checkingAllowedFields=(req)=>{
+    const checkingAllowedFields=['firstName',"lastName","email","age","gender","photoUrl","skills"]
+    
+   const allowedFields= Object.keys(req).every((key)=>{
+      return  checkingAllowedFields.includes(key)
+    })
+
+    if(!allowedFields){
+        throw new Error("updating profile is not allowed")
+    }
+}
+
+
 module.exports={
-    singupValidate
+    singupValidate,
+    checkingAllowedFields
 }
