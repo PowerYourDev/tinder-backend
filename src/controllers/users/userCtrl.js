@@ -46,7 +46,7 @@ const userSingUpCtrl=async(req,res,next)=>{
        res.cookie("token",tokenGenerated,{ expires: new Date(Date.now() + 900000) })
   
        
-      return res.send('user login successfully')
+       return res.send('user login successfully')
       
       
     }catch(e){

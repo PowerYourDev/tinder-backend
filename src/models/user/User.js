@@ -43,6 +43,7 @@ const userSchema = new mongoose.Schema(
         }
 
       },
+    },
       photoUrl: {
         type: String,
         default: "https://geographyandyou.com/images/user-profile.png",
@@ -59,7 +60,7 @@ const userSchema = new mongoose.Schema(
         type: String,
         default: "This is a default about of the user!",
       },
-    }
+    
 },
 { timestamps: true }
 )
@@ -101,6 +102,6 @@ userSchema.pre('save',async function (next){
 
 
 
-const User =mongoose.model("User",userSchema)
+// const User =
 
-module.exports = User
+module.exports = mongoose.model("User",userSchema)

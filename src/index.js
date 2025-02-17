@@ -13,6 +13,7 @@ const authMiddleware =require('./middlewares/auth/authMiddleware')
 
 const userRoutes=require('./routes/users/userRoutes')
 const profileRoutes=require('./routes/profile/profileroutes')
+const RequestRoutes=require('./routes/request/RequestRoute')
 
 const App = express()
 
@@ -24,7 +25,7 @@ App.use(cookieParser())
 
 App.use("/api/users",userRoutes)
 App.use('/api/profile',profileRoutes)
-
+App.use('/api/request',RequestRoutes)
 
 
 
