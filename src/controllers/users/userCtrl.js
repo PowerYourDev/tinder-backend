@@ -1,74 +1,85 @@
-const User =require("../../models/user/User")
+const ConnectionRequest = require('../../models/Request/Request')
+
 const {singupValidate} =require('../../utils/validate')
 const generateToken = require('../../config/jwtToken/generateToken')
+
 
 
 
 //-------------------------------------
 //singUp
 //-------------------------------------
+const USER_SAFE_DATA="firstName lastName photoUrl age gender about skills"
 
-const userSingUpCtrl=async(req,res,next)=>{
-    try{
-      singupValidate(req)
-        const {firstName,lastName,email,password}=req.body
-      
-        
-         const savedUser= await User.create({firstName,lastName,email,password})
-         res.send({ message: "User Added successfully!", data: savedUser })
-         
-    }catch(e){
-     res.status(404).send("something went wrong"+e)
-    }
-  
-  
+
+
+
+
+const userRequestReceivedCtrl=async(req,res)=>{
+
+  try{
+    const loggedInUser=req.user
+    console.log(loggedInUser,"dshfoids")
+     
+    const userReceivedConnectionRequests=await ConnectionRequest.find(
+      {
+        toUserId:loggedInUser._id,
+        status:'interested'
+       }
+    ).populate('toUserId',USER_SAFE_DATA)
+
+    res.json({
+      message: "Data fetched successfully",
+      data: userReceivedConnectionRequests,
+    });
+
+
+
+  }catch(err){
+    res.status(400).send("ERROR"+err)
   }
-
-//-------------------------------------
-//login
-//-------------------------------------
-
- const userLoginCtrl= async(req,res)=>{
-    const {email,password}=req.body
-    try{
-       const userExist= await User.findOne({email:email})
-       console.log(userExist)
-       if(!userExist){
-        throw new Error("email and password is incorrect")
-       }
-       const comparePassword= await userExist.validatePassword(password) 
-       console.log(comparePassword)
-       if(!comparePassword){
-          throw new Error('email and password is not correct')
-       }
-       const tokenGenerated= generateToken(userExist._id)
-  
-       res.cookie("token",tokenGenerated,{ expires: new Date(Date.now() + 900000) })
-  
-       
-       return res.send('user login successfully')
-      
-      
-    }catch(e){
-       res.status(400).send('something went wrong'+e)
-    }
-  }  
-
-//-------------------------------------
-//logout
-//-------------------------------------
-
-const userLogoutCtrl=async(req,res)=>{
-    res.cookie('token',null,{
-        expires: new Date(Date.now())
-    }).send("user logout successfull")
 
 }
 
 
 
+const userRequestConnectionCtrl=async(req,res)=>{
+
+  try{
+      const loggedInUser=req.user
+
+      const userConnections= await ConnectionRequest.find(
+     {  $or: [{
+          fromUserId:loggedInUser._id,
+          status:"accepted"
+       },{
+        toUserId:loggedInUser._id,
+        status:"accepted"
+     }]}) .populate("fromUserId", USER_SAFE_DATA)
+     .populate("toUserId", USER_SAFE_DATA);
+
+   console.log(userConnections);
+
+   const data = userConnections.map((row) => {
+     if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
+       return row.toUserId;
+     }
+     return row.fromUserId;
+   });
+
+   res.json({ data });
+     res.send(userConnections)
+  }catch(err){
+     res.status(400).send("ERROR"+err)
+  }
+}
+
+
+
   module.exports={
-    userSingUpCtrl,
-    userLoginCtrl,
-    userLogoutCtrl
+   
+
+    userRequestReceivedCtrl,
+    userRequestConnectionCtrl,
+    
   }

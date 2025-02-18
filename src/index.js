@@ -14,6 +14,7 @@ const authMiddleware =require('./middlewares/auth/authMiddleware')
 const userRoutes=require('./routes/users/userRoutes')
 const profileRoutes=require('./routes/profile/profileroutes')
 const RequestRoutes=require('./routes/request/RequestRoute')
+const AuthRoutes=require('./routes/Auth/AuthRoutes')
 
 const App = express()
 
@@ -22,7 +23,7 @@ const App = express()
 App.use(express.json())
 App.use(cookieParser())
 
-
+App.use("/api/auth",AuthRoutes)
 App.use("/api/users",userRoutes)
 App.use('/api/profile',profileRoutes)
 App.use('/api/request',RequestRoutes)

@@ -60,9 +60,10 @@ const requestSendCtrl=async(req,res)=>{
 const requestViewCtrl=async(req,res)=>{
       try{
         const user=req.user
-        const fromUserId=req.user._id
-        const toUserId=req.params.toUserId
+        const loggedInUser=req.user._id
+        const requestId=req.params.requestId
         const status=req.params.status
+
 
         const acceptedStatus=["accepted", "rejected"];
 
@@ -71,7 +72,7 @@ const requestViewCtrl=async(req,res)=>{
         }
         const connectionRequest = await ConnectionRequest.findOne({
             _id: requestId,
-            toUserId: loggedInUser._id,
+            toUserId: loggedInUser,
             status: "interested",
           });
           if (!connectionRequest) {

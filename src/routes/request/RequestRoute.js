@@ -11,8 +11,8 @@ const {
 
 const RequestRoutes= express.Router()
 
-RequestRoutes.post('/request/send/:status/:toUserId',authMiddleware, requestSendCtrl)
-RequestRoutes.post('/request/review/:status/:requestId',authMiddleware, requestViewCtrl)
+RequestRoutes.post('/send/:status/:toUserId',authMiddleware, requestSendCtrl)
+RequestRoutes.post('/review/:status/:requestId',authMiddleware, requestViewCtrl)
 
 
 

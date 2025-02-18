@@ -3,14 +3,19 @@ const express = require('express')
 const {
     userSingUpCtrl,
     userLoginCtrl,
-    userLogoutCtrl
+    userLogoutCtrl,
+    userRequestReceivedCtrl,
+    userRequestConnectionCtrl
 }=require('../../controllers/users/userCtrl')
+const authMiddleware = require('../../middlewares/auth/authMiddleware')
 
 const userRoutes= express.Router()
 
-userRoutes.post('/singup',userSingUpCtrl)
-userRoutes.post("/singin",userLoginCtrl);
-userRoutes.post('/logout',userLogoutCtrl)
+
+
+
+userRoutes.get('/requests/received',authMiddleware,userRequestReceivedCtrl)
+userRoutes.get('/requests/connections',authMiddleware,userRequestConnectionCtrl)
 
 
 module.exports=userRoutes
