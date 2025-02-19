@@ -33,16 +33,13 @@ const authSingUpCtrl=async(req,res,next)=>{
         throw new Error("email and password is incorrect")
        }
        const comparePassword= await userExist.validatePassword(password) 
-       console.log(comparePassword)
+       
        if(!comparePassword){
           throw new Error('email and password is not correct')
        }
        const tokenGenerated= generateToken(userExist._id)
   
-       res.cookie("token",tokenGenerated,{ expires: new Date(Date.now() + 900000) })
-  
-       
-       return res.send('user login successfully')
+       res.cookie("token",tokenGenerated,{ expires: new Date(Date.now() + 900000) }).send('user login successfully')
       
       
     }catch(e){

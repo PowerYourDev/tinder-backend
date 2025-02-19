@@ -17,4 +17,6 @@ authRoutes.post('/logout',authLogoutCtrl)
 
 
 
+
+
 module.exports=authRoutes

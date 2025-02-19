@@ -1,14 +1,10 @@
 const ConnectionRequest = require('../../models/Request/Request')
+const User = require('../../models/user/User')
 
 const {singupValidate} =require('../../utils/validate')
 const generateToken = require('../../config/jwtToken/generateToken')
 
 
-
-
-//-------------------------------------
-//singUp
-//-------------------------------------
 const USER_SAFE_DATA="firstName lastName photoUrl age gender about skills"
 
 
@@ -58,7 +54,7 @@ const userRequestConnectionCtrl=async(req,res)=>{
      }]}) .populate("fromUserId", USER_SAFE_DATA)
      .populate("toUserId", USER_SAFE_DATA);
 
-   console.log(userConnections);
+   
 
    const data = userConnections.map((row) => {
      if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
@@ -68,10 +64,50 @@ const userRequestConnectionCtrl=async(req,res)=>{
    });
 
    res.json({ data });
-     res.send(userConnections)
+     
   }catch(err){
      res.status(400).send("ERROR"+err)
   }
+}
+
+const userFeedCtrl=async(req,res)=>{
+   try{
+
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    limit = limit > 50 ? 50 : limit;
+const skip = (page-1)*limit
+
+    const loggedInUser=req.user
+
+    const notAllowedUsersToShowONFeed=await ConnectionRequest.find({
+     $or:[ {fromUserId:loggedInUser._id},
+      {toUserId:loggedInUser._id},
+]
+    }).select("fromUserId  toUserId")
+
+    const savingNotAllowedUsers=new Set()
+
+    notAllowedUsersToShowONFeed.map((user)=>{
+      savingNotAllowedUsers.add(user.fromUserId.toString())
+      savingNotAllowedUsers.add(user.toUserId.toString())
+    })
+
+    const allowedUsersFeed=await User.find({
+     $and: [{_id:{$nin:Array.from(savingNotAllowedUsers)}},
+           {_id:{$ne:loggedInUser._id}}
+      ]
+    }).select(USER_SAFE_DATA).skip(skip).limit(limit)
+
+
+
+    res.json({ data: allowedUsersFeed,message:"successfully feteched the feed users data" });
+
+   }catch(err){
+    res.status(400).json({
+      message:err
+    })
+   }
 }
 
 
@@ -81,5 +117,6 @@ const userRequestConnectionCtrl=async(req,res)=>{
 
     userRequestReceivedCtrl,
     userRequestConnectionCtrl,
+    userFeedCtrl
     
   }
