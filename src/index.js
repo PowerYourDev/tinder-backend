@@ -1,6 +1,7 @@
 const express =require('express')
 const cookieParser = require('cookie-parser')
 const bycrpt= require('bcrypt')
+const cors =require('cors')
 
 const dbConnect =require('./config/db/dbConnect')
 
@@ -17,6 +18,13 @@ const RequestRoutes=require('./routes/request/RequestRoute')
 const AuthRoutes=require('./routes/Auth/AuthRoutes')
 
 const App = express()
+
+App.use(cors(
+   {
+     origin: 'http://localhost:5173',
+     credentials: true,
+   }
+))
 
 // we use this exprees.json middleware because to handle and convert  all the incoming json data to js object which we are passing as request to api's 
 // we can use express.json() middleware by using   "app.use()" because it has run for all requests

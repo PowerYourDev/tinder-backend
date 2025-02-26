@@ -34,16 +34,26 @@ const authSingUpCtrl=async(req,res,next)=>{
        }
        const comparePassword= await userExist.validatePassword(password) 
        
-       if(!comparePassword){
-          throw new Error('email and password is not correct')
-       }
-       const tokenGenerated= generateToken(userExist._id)
+     
+      
+       if (comparePassword) {
+        const tokenGenerated= generateToken(userExist._id)
   
-       res.cookie("token",tokenGenerated,{ expires: new Date(Date.now() + 900000) }).send('user login successfully')
-      
-      
+        res.cookie("token",tokenGenerated,{ expires: new Date(Date.now() + 900000) })
+        res.json({
+          message:"login successfull",
+          data:userExist
+        });
+      } else {
+        throw new Error("Invalid credentials");
+      }
     }catch(e){
-       res.status(400).send('something went wrong'+e)
+      console.log(e,"juhgf")
+       res.status(400).json(
+       { message:e.message,
+        // stack:e.stack
+       }
+       )
     }
   }  
 
