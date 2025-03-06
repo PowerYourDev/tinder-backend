@@ -5,7 +5,7 @@ const authMiddleware = async (req, res, next) => {
   try {
     const { token } = req.cookies;
     if (!token) {
-      res.status(401).send("please login");
+      return res.status(401).send("please login");
     }
     const decodedObj = jwt.verify(token, "dev-tinder@12321");
     if (!decodedObj) {

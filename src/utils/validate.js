@@ -15,7 +15,7 @@ const singupValidate =(req)=>{
 }
 
 const checkingAllowedFields=(req)=>{
-    const checkingAllowedFields=['firstName',"lastName","email","age","gender","photoUrl","skills"]
+    const checkingAllowedFields=['firstName',"lastName","email","age","gender","photoUrl","skills","about"]
     
    const allowedFields= Object.keys(req).every((key)=>{
       return  checkingAllowedFields.includes(key)

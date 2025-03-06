@@ -22,7 +22,7 @@ const userRequestReceivedCtrl=async(req,res)=>{
         toUserId:loggedInUser._id,
         status:'interested'
        }
-    ).populate('toUserId',USER_SAFE_DATA)
+    ).populate('fromUserId',USER_SAFE_DATA)
 
     res.json({
       message: "Data fetched successfully",
