@@ -11,7 +11,12 @@ const authSingUpCtrl=async(req,res,next)=>{
       
         
          const savedUser= await User.create({firstName,lastName,email,password})
-         res.send({ message: "User Added successfully!", data: savedUser })
+         const tokenGenerated = generateToken(savedUser._id)
+         res.cookie("token",tokenGenerated,{ expires: new Date(Date.now() + 900000) })
+         res.json({
+           message:"singup successfull",
+           data:savedUser
+         });
          
     }catch(e){
      res.status(404).send("something went wrong"+e)
