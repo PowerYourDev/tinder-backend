@@ -2,6 +2,7 @@ const express =require('express')
 const cookieParser = require('cookie-parser')
 const bycrpt= require('bcrypt')
 const cors =require('cors')
+const http =require('http')
 
 const dbConnect =require('./config/db/dbConnect')
 
@@ -16,6 +17,9 @@ const userRoutes=require('./routes/users/userRoutes')
 const profileRoutes=require('./routes/profile/profileroutes')
 const RequestRoutes=require('./routes/request/RequestRoute')
 const AuthRoutes=require('./routes/Auth/AuthRoutes')
+
+const initiaizeSocket = require('./utils/socket')
+const ChatRoutes = require('./routes/Chat/ChatRoutes')
 
 const App = express()
 
@@ -36,8 +40,11 @@ App.use("/api/users",userRoutes)
 App.use('/api/profile',profileRoutes)
 App.use('/api/request',RequestRoutes)
 
+App.use('/api/chat',ChatRoutes)
 
 
+const server = http.createServer(App);
+initiaizeSocket(server)
 
 
 //feed
@@ -113,7 +120,7 @@ if(!allwoedUpdating){
 dbConnect()
   .then(() => {
     console.log("Database connection established...");
-    App.listen(5000, () => {
+    server.listen(5000, () => {
       console.log("Server is successfully listening on port 5000...");
     });
   })
