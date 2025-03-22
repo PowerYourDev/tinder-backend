@@ -32,7 +32,7 @@ App.use(cors(
 
 // we use this exprees.json middleware because to handle and convert  all the incoming json data to js object which we are passing as request to api's 
 // we can use express.json() middleware by using   "app.use()" because it has run for all requests
-App.use(express.json())
+App.use(express.json({ limit: '10mb' }));
 App.use(cookieParser())
 
 App.use("/api/auth",AuthRoutes)
