@@ -45,7 +45,7 @@ const authSingUpCtrl=async(req,res,next)=>{
         const tokenGenerated= generateToken(userExist._id)
   
         res.cookie("token",tokenGenerated,{ httpOnly: true,      // Prevent client-side JS from accessing the cookie
-          secure: false,       // Set to true in production when using HTTPS
+          secure: true,       // Set to true in production when using HTTPS
           sameSite: 'None',    // Allow cross-origin requests (important for CORS)
           expires: new Date(Date.now() + 900000) })
         res.json({
