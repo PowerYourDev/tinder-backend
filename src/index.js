@@ -25,7 +25,7 @@ const App = express()
 
 App.use(cors(
    {
-     origin: 'https://tinder-frontend-phi.vercel.app/',
+     origin: 'https://tinder-frontend-phi.vercel.app',
      credentials: true,
    }
 ))
