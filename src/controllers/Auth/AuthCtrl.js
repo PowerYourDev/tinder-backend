@@ -8,6 +8,10 @@ const authSingUpCtrl=async(req,res,next)=>{
     try{
       singupValidate(req)
         const {firstName,lastName,email,password}=req.body
+        const emailExists = await User.findOne({email})
+        if(emailExists){
+          return res.status(409).json({ message: "Email already exists." })
+        }
       
         
          const savedUser= await User.create({firstName,lastName,email,password})

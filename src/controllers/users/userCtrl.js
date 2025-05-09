@@ -97,7 +97,12 @@ const skip = (page-1)*limit
      $and: [{_id:{$nin:Array.from(savingNotAllowedUsers)}},
            {_id:{$ne:loggedInUser._id}}
       ]
-    }).select(USER_SAFE_DATA).skip(skip).limit(limit)
+    }).select(USER_SAFE_DATA).skip(skip).limit(limit);
+
+
+
+
+
 
 
 
