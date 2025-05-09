@@ -15,7 +15,7 @@ const getSecretRoomId = (userId, targetUserId) => {
 const initiaizeSocket=(server)=>{
     const io = socket(server, {
         cors: {
-          origin: "http://localhost:5173",
+          origin: "https://saiteja-dev-connect.vercel.app",
         },
       });
 
