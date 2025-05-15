@@ -2,6 +2,9 @@
 const {singupValidate} =require('../../utils/validate')
 const generateToken = require('../../config/jwtToken/generateToken')
 const User =require("../../models/user/User")
+const nodemailer =require("nodemailer");
+const jwt = require("jsonwebtoken");
+
 
 
 const authSingUpCtrl=async(req,res,next)=>{
@@ -83,9 +86,106 @@ const authLogoutCtrl=async(req,res)=>{
 
 }
 
+const authForgotPassword=async(req,res)=>{
+  try{
+
+    userEmail=req.body.email
+
+   const userExisted= await User.findOne({email:userEmail})
+   if(!userExisted){
+    return res.status(404).send({ message: "User not found" });
+   }
+
+   const tokenGenerated= generateToken(userExisted._id)
+
+
+ 
+
+ 
+
+   const transporter = nodemailer.createTransport({
+    service: "gmail",
+  port: 465, 
+  secure: true, 
+    auth: {
+      user:"saiteja28102001@gmail.com" ,
+      pass: "nxyx ugfg ytrw ueii",
+    },
+  });
+
+  
+  const mailOptions = {
+    from: "saiteja28102001@gmail.com",
+    to: userEmail,
+    subject: "Reset Password",
+    html: `<h1>Reset Your Password</h1>
+  <p>Click on the following link to reset your password:</p>
+  <a href="http://localhost:5173/reset-password/${tokenGenerated}">http://localhost:5173/reset-password/${tokenGenerated}</a>
+  <p>The link will expire in 10 minutes.</p>
+  <p>If you didn't request a password reset, please ignore this email.</p>`,
+  };
+
+
+  transporter.sendMail(mailOptions, (err, info) => {
+    if (err) {
+      return res.status(500).send({ message: err.message });
+    }
+    res.status(200).send({ message: "Email sent" });
+  });
+
+  
+  
+  }catch(error){
+    console.log(error)
+    res.status(400).json(
+      { message:e.message,
+       // stack:e.stack
+      }
+      )
+  }
+}
+
+const resetPassword=async(req,res)=>{
+
+
+  try{
+    const token = req.params.token;
+    if(!token){
+     return res.status(400).json({
+        "message":"invalid password update Try-again"
+      })
+    }
+console.log(token)
+    const decodedObj = jwt.verify(token, "dev-tinder@12321");
+    console.log(decodedObj,"jwt")
+    if(!decodedObj){
+
+     return res.status(401).json({
+        "message":"invalid passwoed update Try-again"
+      })
+    }
+
+    const findUser=await User.findOne({_id:decodedObj.id})
+    if(!findUser){
+      return res.status(401).json({"message":"user not Found"})
+    }
+console.log(findUser)
+    findUser.password=req.body.newPassword
+  const updated=await findUser.save();
+  console.log(updated,"new")
+  res.status(200).send({ message: "Password updated" });
+
+  }catch(e){
+console.log(e)
+  }
+
+}
+
 
 module.exports={
     authSingUpCtrl,
     authLoginCtrl,
-    authLogoutCtrl
+    authLogoutCtrl,
+    authForgotPassword,
+    resetPassword
 }
